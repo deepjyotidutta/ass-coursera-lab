@@ -1,0 +1,198 @@
+Exercise: Storage
+
+The exercises are designed to be completed in your AWS account, and will have an associated cost. For this reason, in addition to the written instructions, this course includes video recordings of the exercises. If you intend to attempt the exercises, familiarize yourself with AWS pricing, specifically Amazon EC2 pricing, Amazon S3 pricing, and Amazon DynamoDB pricing and the AWS Free Tier.
+
+For this scenario, you will create the S3 bucket where the employee photos will be housed. You will also update the EC2 User Data to use the S3 bucket you create. 
+
+In this exercise, you will create a S3 bucket and upload some objects. Then, you will modify the bucket policy and launch an EC2 instance. Finally, you will stop the EC2 instance to prevent future costs. 
+Lab Steps
+Stage 1 - Create an S3 bucket
+
+    Search for S3 in the search bar at the top. Choose S3. 
+
+    Choose Create bucket. 
+
+    For the Bucket name name it employee-photo-bucket- then use your initials and a unique number.
+
+    Example:
+
+    employee-photo-bucket-al-007
+
+    Make sure the Region is the region where you have created the other services. Again, this can be found at the top right. 
+
+    Choose Create bucket.
+
+Stage 2 - Upload a photo
+
+    Choose your newly created bucket by clicking on the name of your bucket. 
+    Choose Upload. 
+    Choose Add files. Choose a photo of your choice on your computer. 
+    Choose Upload.
+    At the top, you should see Upload succeeded in green. Choose Exit.
+
+Stage 3 - Modify the S3 bucket policy
+
+    Choose the Permissions tab. Scroll down to Bucket policy.
+
+    Choose Edit. Paste in the following policy:
+
+    {
+
+        "Version": "2012-10-17",
+
+        "Statement": [
+
+            {
+
+                "Sid": "AllowS3ReadAccess",
+
+                "Effect": "Allow",
+
+                "Principal": {
+
+                    "AWS": "arn:aws:iam::<INSERT-ACCOUNT-NUMBER>:role/S3DynamoDBFullAccessRole"
+
+                },
+
+                "Action": "s3:*",
+
+                "Resource": [
+
+                    "arn:aws:s3:::<INSERT-BUCKET-NAME>",
+
+                    "arn:aws:s3:::<INSERT-BUCKET-NAME>/*"
+
+                ]
+
+            }
+
+        ]
+
+    }
+
+    Replace the <INSERT-BUCKET-NAME> value with your bucket name.
+
+    Replace the <INSERT-ACCOUNT-NUMBER> value with your account number. This can be found by choosing your username at the top right and copying down the value next to My Account.
+
+    Example:
+
+    {
+
+        "Version": "2012-10-17",
+
+        "Statement": [
+
+            {
+
+                "Sid": "AllowS3ReadAccess",
+
+                "Effect": "Allow",
+
+                "Principal": {
+
+                    "AWS": "arn:aws:iam::000000000000:role/S3DynamoDBFullAccessRole"
+
+                },
+
+                "Action": "s3:*",
+
+                "Resource": [
+
+                    "arn:aws:s3:::employee-photo-bucket-al-007",
+
+                    "arn:aws:s3:::employee-photo-bucket-al-007/*"
+
+                ]
+
+            }
+
+        ]
+
+    }
+
+    Choose Save changes.
+
+Stage 4 - Modify the application to use the S3 bucket
+
+    Search for EC2 in the search bar at the top. Choose EC2. 
+
+    Choose Instances under Instances at the left side panel. 
+
+    Select the employee-directory-app instance. Which should be in the Stopped state.
+
+    Choose Actions. Image and templates and Launch more like this.
+
+    At the top, choose 3. Configure instance.
+
+    Next to Auto-assign Public IP, choose Enable. 
+
+    Scroll down to Advanced Details. And next to User data. You will update the PHOTOS_BUCKET and AWS_DEFAULT_REGION variable.
+
+    #!/bin/bash -ex
+
+    wget https://aws-tc-largeobjects.s3-us-west-2.amazonaws.com/DEV-AWS-MO-GCNv2/FlaskApp.zip
+
+    unzip FlaskApp.zip
+
+    cd FlaskApp/
+
+    yum -y install python3 mysql
+
+    pip3 install -r requirements.txt
+
+    amazon-linux-extras install epel
+
+    yum -y install stress
+
+    export PHOTOS_BUCKET=<INSERT-BUCKET-NAME-HERE>
+
+    export AWS_DEFAULT_REGION=<INSERT-REGION-NAME-HERE>
+
+    export DYNAMO_MODE=on
+
+    FLASK_APP=application.py /usr/local/bin/flask run --host=0.0.0.0 --port=80
+
+    Change the following line to match your bucket name:
+
+    Example:
+
+    export PHOTOS_BUCKET=employee-photo-bucket-al-007
+
+    Choose 5. Add Tags at the top. Append s3 to the Value. 
+
+    Example:
+
+    employee-directory-app-s3
+
+    Choose Review and Launch. Choose Launch.
+
+    Leave the app-key-pair selected under Select a key pair. Select the acknowledgement.
+
+    Choose Launch Instances. 
+
+    Choose View Instances. The instance should now show up under Instances. Wait for the Instance state to change to Running and the Status check to change to green.
+
+    Next to Name, choose the checkbox to select the employee-directory-app-s3 instance.  Under the Details tab copy down the Public IPv4 address. 
+
+    Note: Do not use the link to open the IPv4 address. Instead, copy only the address and paste it into a new browser. 
+
+    Paste it into a new browser tab/window. You should see a Employee Directory placeholder. Right now you will not be able to interact with it as it's not currently connected to the database. 
+
+Stage 5 - Delete your object
+
+    Search for S3 in the search bar at the top. Choose S3. 
+    Select your employee-photo-bucket-. Select your object. 
+    Choose Delete. Confirm deletion by typing in the words permanently delete. 
+    Choose Delete objects. Choose Exit. 
+
+Stage 6 - Stop your EC2 instance
+
+Congrats! You've launched an EC2 instance that uses the S3 bucket you created. To prevent future costs, you will now stop the instance. (Note: do not terminate it, as the next lab will use this instance.)
+
+    Search for EC2 in the search bar at the top. Choose EC2. 
+    Choose Instances in the left side panel and select the employee-directory-app-s3.
+    Choose Instance state and Stop instance. Choose Stop. The Instance state will eventually go into the Stopped state. 
+
+Lab Complete
+
+	 Congratulations! You have completed the lab.
