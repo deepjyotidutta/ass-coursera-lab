@@ -1,0 +1,82 @@
+Exercise: Databases
+
+The exercises are designed to be completed in your AWS account, and will have an associated cost. For this reason, in addition to the written instructions, this course includes video recordings of the exercises. If you intend to attempt the exercises, familiarize yourself with AWS pricing, specifically Amazon EC2 pricing, Amazon S3 pricing, and Amazon DynamoDB pricing and the AWS Free Tier.
+
+Part of your responsibility is to keep the employee database up to date. To do this, you will create the DynamoDB table for the employee directory application. 
+
+In this exercise, you will relaunch your EC2 instance. Then, you will create a DynamoDB table and test the EC2 application. Finally, you will verify the data shows up in DynamoDB. 
+Lab Steps
+Stage 1 - Launch an EC2 instance
+
+    Search for EC2 in the search bar at the top. Choose EC2. 
+
+    Choose Instances under Instances at the left side panel. 
+
+    Select the employee-directory-app-s3 instance. Which should be in the Stopped state.
+
+    Choose Actions. Image and templates and Launch more like this.
+
+    At the top, choose 3. Configure instance.
+
+    Next to Auto-assign Public IP, choose Enable. 
+
+    At the top, choose 5. Add Tags. Remove s3 at the end of the value and append lab6 instead.
+
+    Example:
+
+    employee-directory-app-lab6
+
+    Choose Review and Launch. Choose Launch.
+
+    Leave the app-key-pair selected under Select a key pair. Select the acknowledgement.
+
+    Choose Launch Instances. 
+
+    Choose View Instances. The instance should now show up under Instances. Wait for the Instance state to change to Running and the Status check to change to 2/2 checks passed.
+
+    Next to Name, choose the checkbox to select the employee-directory-app-lab6 instance.  Under the Details tab copy down the Public IPv4 address. 
+
+    Paste it into a new browser tab/window. You should see a Employee Directory placeholder. Right now you will not be able to interact with it as it's not currently connected to the database. 
+
+Stage 2 - Create DynamoDB table
+
+To connect the app to a database, you first need to create one! To do this, you'll use DynamoDB. 
+
+    Search for DynamoDB in the search bar at the top. Choose DynamoDB.
+    At the left choose Tables. Choose Create table. 
+    For the Table name paste in Employees. For the Primary key paste in id. 
+    Choose Create. 
+
+Stage 3 - Test the application
+
+    Search for EC2 in the search bar at the top. Choose EC2. 
+
+    Under Instances (running) select the employee-directory-app-lab6 instance.
+
+    Under the Details tab copy down the Public IPv4 address. 
+
+    Choose Add. Create a new employee entry by typing in a name, location and job title, as well as selecting attributes. Then, choose Choose File. Feel free to upload a picture of your choice. Choose Save. 
+
+    Note: Feel free to create a few entries, as well as edit and delete entries.
+
+    You should now be seeing the list of employees you added on the employee directory application! Great job. 
+
+Stage 4 - View the item in the database
+
+Let's see how these employees are stored in DynamoDB. 
+
+    Back in the AWS Mangement Console, search for DynamoDB in the search bar at the top. Choose DynamoDB.
+    Choose Tables. Choose the Employees table.
+    Choose the Items tab. You can now see the entries in the database made from the EC2 application. Hooray!
+
+Stage 5 - Stop your EC2 instance
+
+Congrats! You've launched an EC2 instance that uses the S3 bucket and DynamoDB table you created. To prevent future costs, you will now stop the instance. (Note: do not terminate it, as the next lab will use this instance.)
+
+    Search for EC2 in the search bar at the top. Choose EC2. 
+    Choose Instances in the left side panel and select the employee-directory-app-lab6.
+    Choose Instance state and Stop instance. Choose Stop. The Instance state will eventually go into the Stopped state. 
+
+Lab Complete
+
+	 Congratulations! You have completed the lab.
